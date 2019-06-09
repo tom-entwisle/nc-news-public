@@ -15,16 +15,13 @@ const fetchArticle = ({ article_id }) => {
     });
 };
 
-const increaseVote = ({ article_id }, { inc_votes = 0 }) => {
-  return connection("articles")
-    .where({ article_id: article_id })
-    .increment("votes", inc_votes)
-    .returning("*")
-    .then(article => {
-      if (article.length < 1) {
-        return Promise.reject({ status: 404, message: "article not found" });
-      } else return article[0];
-    });
+const patchVotes = (article_id, votes) => {
+  return connection
+    .select("*")
+    .from("articles")
+    .where("articles.article_id", "=", article_id)
+    .increment("votes", votes)
+    .returning("*");
 };
 
 const addComment = ({ article_id }, username, body) => {
@@ -84,7 +81,7 @@ const fetchArticles = ({
     });
 };
 
-const checkTopicOrColumnExists = ({ topic, sort_by = "*" }) => {
+const checkExists = ({ topic, sort_by = "*" }) => {
   return connection
     .select(sort_by)
     .from("articles")
@@ -100,9 +97,9 @@ const checkTopicOrColumnExists = ({ topic, sort_by = "*" }) => {
 
 module.exports = {
   fetchArticle,
-  increaseVote,
+  patchVotes,
   addComment,
   fetchComments,
   fetchArticles,
-  checkTopicOrColumnExists
+  checkExists
 };

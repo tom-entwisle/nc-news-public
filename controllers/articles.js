@@ -1,10 +1,10 @@
 const {
   fetchArticle,
-  increaseVote,
+  patchVotes,
   addComment,
   fetchComments,
   fetchArticles,
-  checkTopicOrColumnExists
+  checkExists
 } = require("../models/articles");
 
 const sendArticle = (req, res, next) => {
@@ -16,7 +16,7 @@ const sendArticle = (req, res, next) => {
 };
 
 const updatedArticle = (req, res, next) => {
-  increaseVote(req.params, req.body)
+  patchVotes(req.params, req.body)
     .then(article => {
       res.status(200).send({ article });
     })
@@ -41,7 +41,7 @@ const sendComments = (req, res, next) => {
 };
 
 const sendArticles = (req, res, next) => {
-  checkTopicOrColumnExists(req.query)
+  checkExists(req.query)
     .then(() => {
       return fetchArticles(req.query);
     })

@@ -13,10 +13,6 @@ app.all("/*", routeNotFound);
 
 app.use(handle500);
 
-app.get("/", function(req, res) {
-  res.status(200).send("Welcome to NC News!");
-});
-
 // 404 error handling
 app.use(function(req, res, next) {
   let err = new Error("Not Found");

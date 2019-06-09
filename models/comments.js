@@ -13,6 +13,17 @@ const updateCommentVote = ({ comment_id }, { inc_votes = 0 }) => {
     });
 };
 
+const postComment = (article_id, userInput) => {
+  const commentToInsert = { ...userInput };
+  commentToInsert.article_id = article_id;
+  commentToInsert.author = commentToInsert.username;
+  delete commentToInsert.username;
+  return connection
+    .insert(commentToInsert)
+    .into("comments")
+    .returning("*");
+};
+
 const deleteComment = comment_id => {
   return connection("comments")
     .where(comment_id)
@@ -25,4 +36,4 @@ const deleteComment = comment_id => {
     });
 };
 
-module.exports = { updateCommentVote, deleteComment };
+module.exports = { updateCommentVote, deleteComment, postComment };
