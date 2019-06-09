@@ -1,4 +1,4 @@
 node_modules
 knexfile.js
 spec/
-utils/spec
+utils/spec/
