@@ -1,14 +1,13 @@
 const {
   articlesData,
-  commentsData,
   topicsData,
-  usersData
+  usersData,
+  commentsData
 } = require("../data");
 const {
-  convertToDateTime,
-  pairKeys,
-  replaceKeys,
-  swapKeyID
+  formatDate,
+  formatComments,
+  createReferenceObject
 } = require("../data/utils/dataManip");
 
 exports.seed = (knex, Promise) => {
@@ -16,31 +15,21 @@ exports.seed = (knex, Promise) => {
     .rollback()
     .then(() => knex.migrate.latest())
     .then(() => {
-      return knex
-        .insert(topicsData)
-        .into("topics")
-        .returning("*");
+      return knex("topics").insert(topicsData);
     })
     .then(() => {
-      return knex
-        .insert(usersData)
-        .into("users")
-        .returning("*");
+      return knex("users").insert(usersData);
     })
     .then(() => {
-      return knex
-        .insert(convertToDateTime(articlesData))
-        .into("articles")
+      const formattedArticles = formatDate(articlesData);
+      return knex("articles")
+        .insert(formattedArticles)
         .returning("*");
     })
-    .then(articles => {
-      const idTitle = pairKeys(articles);
-      const replacedWithId = replaceKeys(commentsData, idTitle);
-      const withTimeStamp = convertToDateTime(replacedWithId);
-      const withAuthor = swapKeyID(withTimeStamp);
-      return knex
-        .insert(withAuthor)
-        .into("comments")
-        .returning("*");
+    .then(articlesRows => {
+      let formattedComments = formatDate(commentsData);
+      const refObj = createReferenceObject(formattedComments, articlesRows);
+      formattedComments = formatComments(commentsData, refObj);
+      return knex("comments").insert(formattedComments);
     });
 };

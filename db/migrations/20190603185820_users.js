@@ -1,11 +1,11 @@
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable("users", userTable => {
-    userTable
+  return knex.schema.createTable("users", usersTable => {
+    usersTable
       .string("username")
-      .primary()
-      .unique();
-    userTable.string("avatar_url").notNullable();
-    userTable.string("name").notNullable();
+      .unique()
+      .primary();
+    usersTable.string("avatar_url").notNullable();
+    usersTable.string("name").notNullable();
   });
 };
 
